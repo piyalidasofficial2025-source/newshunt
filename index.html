@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feminine Fit</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #fff0f5;
+        }
+
+        /* Header Slider */
+        .header-slider {
+            position: relative;
+            overflow: hidden;
+            height: 300px;
+        }
+        .header-slider img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            position: absolute;
+            animation: slide 12s infinite;
+            opacity: 0;
+        }
+        .header-slider img:nth-child(1) { animation-delay: 0s; }
+        .header-slider img:nth-child(2) { animation-delay: 4s; }
+        .header-slider img:nth-child(3) { animation-delay: 8s; }
+
+        @keyframes slide {
+            0% {opacity:0;}
+            8% {opacity:1;}
+            33% {opacity:1;}
+            41% {opacity:0;}
+            100% {opacity:0;}
+        }
+
+        /* Product Grid */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+        .product-card {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            overflow: hidden;
+            text-align: center;
+            padding: 10px;
+        }
+        .product-card img {
+            width: 100%;
+            border-bottom: 1px solid #ddd;
+        }
+        .product-card h3 {
+            margin: 10px 0 5px;
+        }
+        .price {
+            font-weight: bold;
+            color: #e91e63;
+        }
+        .old-price {
+            text-decoration: line-through;
+            color: #888;
+            margin-right: 8px;
+        }
+        .quantity {
+            margin: 10px 0;
+        }
+        .quantity input {
+            width: 50px;
+            text-align: center;
+        }
+        .add-btn {
+            background: #e91e63;
+            color: #fff;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Cart */
+        .cart {
+            position: fixed;
+            right: 20px;
+            top: 20px;
+            background: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            width: 250px;
+        }
+        .cart h3 {
+            margin-top: 0;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .checkout-btn {
+            width: 100%;
+            padding: 10px;
+            background: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Header Slider -->
+    <div class="header-slider">
+        <img src="assets/header1.jpg" alt="Header 1">
+        <img src="assets/header2.jpg" alt="Header 2">
+        <img src="assets/header3.jpg" alt="Header 3">
+    </div>
+
+    <!-- Products -->
+    <div class="product-grid">
+        <div class="product-card">
+            <img src="assets/bra1.jpg" alt="Bra 1">
+            <h3>Bra Stylish</h3>
+            <div><span class="old-price">₹1200</span> <span class="price">₹899</span></div>
+            <div class="quantity">
+                Qty: <input type="number" min="1" value="1">
+            </div>
+            <button class="add-btn" onclick="addToCart('Bra Stylish', 899, this)">Add to Cart</button>
+        </div>
+
+        <div class="product-card">
+            <img src="assets/panty1.jpg" alt="Panty 1">
+            <h3>Panty Comfort</h3>
+            <div><span class="old-price">₹600</span> <span class="price">₹399</span></div>
+            <div class="quantity">
+                Qty: <input type="number" min="1" value="1">
+            </div>
+            <button class="add-btn" onclick="addToCart('Panty Comfort', 399, this)">Add to Cart</button>
+        </div>
+
+        <div class="product-card">
+            <img src="assets/shorts1.jpg" alt="Shorts 1">
+            <h3>Shorts Casual</h3>
+            <div><span class="old-price">₹800</span> <span class="price">₹599</span></div>
+            <div class="quantity">
+                Qty: <input type="number" min="1" value="1">
+            </div>
+            <button class="add-btn" onclick="addToCart('Shorts Casual', 599, this)">Add to Cart</button>
+        </div>
+
+        <!-- Add more products as needed -->
+    </div>
+
+    <!-- Cart -->
+    <div class="cart">
+        <h3>Cart</h3>
+        <div id="cart-items"></div>
+        <div>Total: ₹<span id="cart-total">0</span></div>
+        <button class="checkout-btn" onclick="checkout()">Checkout</button>
+    </div>
+
+    <script>
+        let cart = [];
+
+        function addToCart(name, price, btn) {
+            const qty = parseInt(btn.parentElement.querySelector('input').value);
+            const existing = cart.find(item => item.name === name);
+            if(existing) {
+                existing.qty += qty;
+            } else {
+                cart.push({name, price, qty});
+            }
+            updateCart();
+        }
+
+        function updateCart() {
+            const cartItems = document.getElementById('cart-items');
+            cartItems.innerHTML = '';
+            let total = 0;
+            cart.forEach(item => {
+                total += item.price * item.qty;
+                const div = document.createElement('div');
+                div.className = 'cart-item';
+                div.innerHTML = `${item.name} x ${item.qty} <span>₹${item.price * item.qty}</span>`;
+                cartItems.appendChild(div);
+            });
+            document.getElementById('cart-total').innerText = total;
+        }
+
+        function checkout() {
+            if(cart.length === 0) {
+                alert('Cart is empty!');
+                return;
+            }
+            alert('Checkout successful! Total: ₹' + document.getElementById('cart-total').innerText);
+            cart = [];
+            updateCart();
+        }
+    </script>
+
+</body>
+</html>
